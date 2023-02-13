@@ -1,18 +1,21 @@
 import pygame
 import time
 from BackEnd.SnakeClass import Snake
+from BackEnd.FieldClass import Field
 
-FPS = 60
+FPS = 200
 VELOCITY = 1
+WALKEVERY = 10
 
 pygame.init()
 sc = pygame.display.set_mode((600, 600), pygame.RESIZABLE)
-pygame.display.set_caption('the Python Game (v1.0.0) (alpha 0003)')
+pygame.display.set_caption('the Python Game (v1.0.0) (alpha 0004)')
 pygame.display.set_icon(pygame.image.load('icon.png'))
 
 executing = True
-
-controls = [0, 0, 0, 0]
+cnt = 1
+controls = []
+last_dir = 0
 ck = {pygame.K_RIGHT: 0,
       pygame.K_d: 0,
       pygame.K_DOWN: 1,
@@ -23,8 +26,8 @@ ck = {pygame.K_RIGHT: 0,
       pygame.K_w: 3}
 
 sn = Snake([(i, 0) for i in range(15, -1, -1)], VELOCITY)
+field = Field([sn], [0])
 
-last_dir = None
 running = True
 clock = pygame.time.Clock()
 while running:
@@ -34,30 +37,32 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key in ck.keys():
-                controls[ck[event.key]] = 1
+                if ck[event.key] not in controls:
+                    controls.append(ck[event.key])
         elif event.type == pygame.KEYUP:
             if event.key in ck.keys():
-                controls[ck[event.key]] = 0
+                controls.remove(ck[event.key])
         elif event.type == pygame.WINDOWRESIZED:
             pygame.display.update()
 
     # moving snake if needed
-    if any(controls):
-        dir = controls.index(1)
-        print(dir)
-        if (not (last_dir == 0 and dir == 2)) and (not (dir == 0 and last_dir == 2)) and (
-        not (last_dir == 1 and dir == 3)) and (not (dir == 1 and last_dir == 3)):
-            last_dir = dir
+    if cnt == 0:
+        cur = True
+        for i in controls[::-1]:
+            if field.move_snake(0, i):
+                last_dir = i
+                cur = False
+                break
+        if cur: field.move_snake(0, last_dir)
 
-    if last_dir is not None:
-        sn.move(last_dir)
-        cords2Draw = sn.listOfCoords_H2T()
+        cords2Draw = field.snakes[0].listOfCoords_H2T()
         width, height = sc.get_size()
-        print(cords2Draw, sc.get_size())
         sc.fill((0, 0, 0))
         for i in cords2Draw:
-            pygame.draw.rect(sc, 'red', (i[0] / 40 * width, i[1] / 40 * height, 1 / 40 * width, 1 / 40 * height))
+            pygame.draw.rect(sc, 'green', (i[0] / 40 * width, i[1] / 40 * height, 1 / 40 * width, 1 / 40 * height))
 
-    pygame.display.update()
+        pygame.display.update()
     clock.tick(FPS)
+    cnt += 1
+    cnt %= WALKEVERY
 pygame.quit()
