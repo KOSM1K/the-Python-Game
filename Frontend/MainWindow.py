@@ -60,6 +60,8 @@ while running:
         sc.fill((0, 0, 0))
         for i in cords2Draw:
             pygame.draw.rect(sc, 'green', (i[0] / 40 * width, i[1] / 40 * height, 1 / 40 * width, 1 / 40 * height))
+        pygame.draw.rect(sc, 'red',
+                         (field.apple[0] / 40 * width, field.apple[1] / 40 * height, 1 / 40 * width, 1 / 40 * height))
 
         pygame.display.update()
     clock.tick(FPS)

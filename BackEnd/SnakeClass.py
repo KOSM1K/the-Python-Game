@@ -42,3 +42,8 @@ class Snake:
         for i in range(len(self.coordinates)):
             lst.append(self.coordinates[((self.HPointer + i) % len(self.coordinates))])
         return lst
+
+    def predict(self, direction: int):
+        dirs = [(self.velocity, 0), (0, self.velocity), (-self.velocity, 0), (0, -self.velocity)]
+        return (self.coordinates[self.HPointer][0] + dirs[direction][0],
+                self.coordinates[self.HPointer][1] + dirs[direction][1])
