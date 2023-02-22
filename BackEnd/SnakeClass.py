@@ -47,3 +47,9 @@ class Snake:
         dirs = [(self.velocity, 0), (0, self.velocity), (-self.velocity, 0), (0, -self.velocity)]
         return (self.coordinates[self.HPointer][0] + dirs[direction][0],
                 self.coordinates[self.HPointer][1] + dirs[direction][1])
+
+    def find_crossover(self):
+        coords_srt = self.listOfCoords_H2T()
+        if coords_srt[0] in coords_srt[1:]:
+            return coords_srt[1:].index(coords_srt[0]) + 1
+        return -1

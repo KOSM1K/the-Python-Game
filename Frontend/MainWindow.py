@@ -26,7 +26,9 @@ ck = {pygame.K_RIGHT: 0,
       pygame.K_w: 3}
 
 sn = Snake([(i, 0) for i in range(15, -1, -1)], VELOCITY)
-field = Field([sn], [0])
+sn2 = Snake([(i, 5) for i in range(4, -1, -1)], VELOCITY)
+
+field = Field([sn, sn2], [0, 0])
 
 running = True
 clock = pygame.time.Clock()
@@ -47,21 +49,23 @@ while running:
 
     # moving snake if needed
     if cnt == 0:
-        cur = True
-        for i in controls[::-1]:
-            if field.move_snake(0, i):
-                last_dir = i
-                cur = False
-                break
-        if cur: field.move_snake(0, last_dir)
+        for sn_ind in range(2):
+            cur = True
+            for i in controls[::-1]:
+                if field.move_snake(sn_ind, i):
+                    last_dir = i
+                    cur = False
+                    break
+            if cur: field.move_snake(sn_ind, last_dir)
 
-        cords2Draw = field.snakes[0].listOfCoords_H2T()
         width, height = sc.get_size()
         sc.fill((0, 0, 0))
-        for i in cords2Draw:
-            pygame.draw.rect(sc, 'green', (i[0] / 40 * width, i[1] / 40 * height, 1 / 40 * width, 1 / 40 * height))
-        pygame.draw.rect(sc, 'red',
-                         (field.apple[0] / 40 * width, field.apple[1] / 40 * height, 1 / 40 * width, 1 / 40 * height))
+        for sn_ind in range(2):
+            cords2Draw = field.snakes[sn_ind].listOfCoords_H2T()
+            for i in cords2Draw:
+                pygame.draw.rect(sc, 'green', (i[0] / 40 * width, i[1] / 40 * height, 1 / 40 * width, 1 / 40 * height))
+            pygame.draw.rect(sc, 'red',
+                             (field.apple[0] / 40 * width, field.apple[1] / 40 * height, 1 / 40 * width, 1 / 40 * height))
 
         pygame.display.update()
     clock.tick(FPS)
