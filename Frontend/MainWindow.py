@@ -15,8 +15,6 @@ def main():
     pygame.display.set_caption('the Python Game (v1.0.0) (alpha 0004)')
     pygame.display.set_icon(pygame.image.load('Frontend/icon.png'))
 
-
-
     field = Field([], [], (FIELD_SIZE, FIELD_SIZE))
     sn = Snake([(i, 0) for i in range(15, -1, -1)], VELOCITY)
     field.appendSnake(sn, 0)
