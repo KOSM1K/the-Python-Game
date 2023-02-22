@@ -25,9 +25,11 @@ def main():
           pygame.K_UP: 3,
           pygame.K_w: 3}
 
-    sn = Snake([(i, 0) for i in range(15, -1, -1)], VELOCITY)
 
-    field = Field([sn], [0])
+    field = Field([], [])
+
+    sn = Snake([(i, 0) for i in range(15, -1, -1)], VELOCITY)
+    field.appendSnake(sn, 0)
 
     NUM_OF_SNAKES = len(field.snakes)
 

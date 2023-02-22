@@ -49,3 +49,7 @@ class Field:
                         c = True
                         break
         self.apple = (x, y)
+
+    def appendSnake(self, sn: Snake, dir:int):
+        self.snakes.append(sn)
+        self.dirs.append(dir)
