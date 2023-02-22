@@ -1,10 +1,4 @@
-from Frontend import MainWindow
+from BackEnd.SnakeClass import Snake
 
-<<<<<<< Updated upstream
-
-if __name__ == "__main__":
-  MainWindow.main()
-=======
 if __name__ == '__main__':
     pass
->>>>>>> Stashed changes
