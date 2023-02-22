@@ -1,4 +1,4 @@
-from BackEnd.SnakeClass import Snake
+from Frontend import MainWindow
 
 if __name__ == '__main__':
-    pass
+    MainWindow.main()
