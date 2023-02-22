@@ -13,7 +13,7 @@ def main():
     pygame.display.set_caption('the Python Game (v1.0.0) (alpha 0004)')
     pygame.display.set_icon(pygame.image.load('Frontend/icon.png'))
 
-    executing = True
+    running = True
     cnt = 1
     controls = []
     ck = {pygame.K_RIGHT: 0,
@@ -31,7 +31,6 @@ def main():
 
     NUM_OF_SNAKES = len(field.snakes)
 
-    running = True
     clock = pygame.time.Clock()
     while running:
         # event capture
@@ -57,6 +56,8 @@ def main():
                         cur = False
                         break
                 if cur: field.move_snake(sn_ind, field.dirs[sn_ind])
+                if field.snakes[sn_ind].find_crossover() != -1:
+                    running = False
 
             width, height = sc.get_size()
             sc.fill((0, 0, 0))
