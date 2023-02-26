@@ -1,1 +1,3 @@
 IS_RESIZABLE = True
+HOST = "10.10.10.58"
+PORT = 5555

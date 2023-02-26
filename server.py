@@ -4,14 +4,13 @@ from _thread import *
 import sys
 
 from BackEnd.SnakeClass import Snake
+import config
 
-server = "10.10.10.58"
-port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
-	s.bind((server, port))
+	s.bind((config.HOST, config.PORT))
 except socket.error as e:
 	print(e)
 
