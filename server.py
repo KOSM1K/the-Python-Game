@@ -36,9 +36,9 @@ print("Waiting for a connection, Server started!")
 
 
 def threaded_client(conn, addr):
-	for room in rooms:
-		if room.is_free:
-			room.add_player(Snake(addr[1]))
+	# for room in rooms:
+	# 	if room.is_free:
+	# 		room.add_player(Snake(addr[1]))
 	conn.send(str.encode(json.dumps({"player_id": addr[1]})))
 	reply = ""
 	while True:
