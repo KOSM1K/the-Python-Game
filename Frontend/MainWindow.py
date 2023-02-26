@@ -6,7 +6,7 @@ from BackEnd.FieldClass import Field
 from network import Network
 import config
 
-FPS = 150
+FPS = 125
 VELOCITY = 1
 WALKEVERY = 10
 FIELD_SIZE = 40
@@ -21,9 +21,12 @@ def main():
 	pygame.display.set_caption('the Python Game (v1.0.0) (alpha 0004)')
 	pygame.display.set_icon(pygame.image.load('Frontend/icon.png'))
 
-	field = Field([], [], (FIELD_SIZE, FIELD_SIZE))
+	field = Field(snake_id, [], [], (FIELD_SIZE, FIELD_SIZE))
 	sn = Snake(snake_id, [(i, 0) for i in range(15, -1, -1)], VELOCITY)
 	field.appendSnake(sn, 0)
+
+	n.send({"cords": sn.coordinates})
+
 	snakes_len = len(field.snakes)
 
 	playingField = resizePrepare(field, screen)
@@ -58,10 +61,13 @@ def main():
 
 		# moving snake if needed
 		if cnt == 0:
+			cur = True
 			for i in n.send({"controls": controls[::-1]})["controls"]:
+				field.change_dir(snake_id, i)
 				if field.move_snake(snake_id, i):
 					cur = False
 					break
+			field.update()
 			if cur: field.move_snake(snake_id, field.dirs[snake_id])
 			if field.snakes[snake_id].find_crossover() != -1:
 				running = False
@@ -84,14 +90,13 @@ def resizePrepare(field: Field, screen):
 
 
 def draw_field(field: Field, screen, playingField):
-	snakes_len = len(field.snakes)
 	width, height = playingField.get_size()
 	fieldW, fieldH = field.size
 	playingField.fill((0, 0, 0))
-	for sn_ind in range(snakes_len):
-		cords2Draw = field.snakes[sn_ind].listOfCoords_H2T()
+	for snake_id, _ in field.snakes.items():
+		cords2Draw = field.snakes[snake_id].listOfCoords_H2T()
 		for i in cords2Draw:
-			pygame.draw.rect(playingField, field.snakes[sn_ind].color,
+			pygame.draw.rect(playingField, field.snakes[snake_id].color,
 							 (i[0] / fieldW * width, i[1] / fieldH * height, ceil(1 / fieldW * width),
 							  ceil(1 / fieldH * height)))
 	pygame.draw.rect(playingField, 'red',
