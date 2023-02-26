@@ -25,7 +25,7 @@ def main():
 	sn = Snake(snake_id, [(i, 0) for i in range(15, -1, -1)], VELOCITY)
 	field.appendSnake(sn, 0)
 
-	n.send({"cords": sn.coordinates})
+	print(n.send({"cords": field.snakes[snake_id].coordinates}))
 
 	snakes_len = len(field.snakes)
 

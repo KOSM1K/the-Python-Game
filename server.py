@@ -53,7 +53,7 @@ def threaded_client(conn, addr):
 				print(reply)
 				for key, value in reply.items():
 					pass
-				conn.sendall(str.encode(reply))
+				conn.sendall(str.encode(json.dumps(reply)))
 		except:
 			break
 
