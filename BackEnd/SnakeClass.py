@@ -1,11 +1,13 @@
 class Snake:
-    def __init__(self, coord: list[tuple], velocity, id):
+    def __init__(self, coord: list[tuple], dir, velocity, snake_id, color="yellow"):
         if len(coord) > 0:
             self.coordinates = coord
             self.HPointer = 0
             self.TPointer = len(coord) - 1
             self.velocity = velocity
-            self.id =  id
+            self.id = snake_id
+            self.color = color
+            self.dir = dir
         else:
             raise ValueError("coordinates length must be at least 1")
 
@@ -44,10 +46,10 @@ class Snake:
             lst.append(self.coordinates[((self.HPointer + i) % len(self.coordinates))])
         return lst
 
-    def predict(self, direction: int):
+    def predict(self):
         dirs = [(self.velocity, 0), (0, self.velocity), (-self.velocity, 0), (0, -self.velocity)]
-        return (self.coordinates[self.HPointer][0] + dirs[direction][0],
-                self.coordinates[self.HPointer][1] + dirs[direction][1])
+        return (self.coordinates[self.HPointer][0] + dirs[self.dir][0],
+                self.coordinates[self.HPointer][1] + dirs[self.dir][1])
 
     def find_crossover(self):
         coords_srt = self.listOfCoords_H2T()
