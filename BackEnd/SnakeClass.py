@@ -1,11 +1,13 @@
 class Snake:
-    def __init__(self, coord: list[tuple], velocity, id):
+    def __init__(self, coord: list[tuple], velocity, dir, id, color=(100, 100, 100)):
         if len(coord) > 0:
             self.coordinates = coord
             self.HPointer = 0
             self.TPointer = len(coord) - 1
             self.velocity = velocity
-            self.id =  id
+            self.dir = dir
+            self.id = id
+            self.color = color
         else:
             raise ValueError("coordinates length must be at least 1")
 
@@ -18,7 +20,7 @@ class Snake:
         :type incrLen: bool
         Just moves the snake.
         '''
-
+        self.dir = direction
         dirs = [(self.velocity, 0), (0, self.velocity), (-self.velocity, 0), (0, -self.velocity)]
 
         if incrLen:

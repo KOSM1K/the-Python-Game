@@ -23,10 +23,10 @@ def main():
     pygame.display.set_icon(pygame.image.load('Frontend/icon.png'))
 
     field = Field([], [], (FIELD_SIZE, FIELD_SIZE))
-    sn = Snake([(i, 0) for i in range(15, -1, -1)], VELOCITY, self_id)
-    sn2 = Snake([(i, 5) for i in range(15, -1, -1)], VELOCITY, 2)
-    field.appendSnake(sn, 0)
-    field.appendSnake(sn2, 0)
+    sn = Snake([(i, 0) for i in range(15, -1, -1)], VELOCITY, 0, self_id, (0, 255, 0))
+    sn2 = Snake([(i, 5) for i in range(15, -1, -1)], VELOCITY, 0, 2)
+    field.appendSnake(sn)
+    field.appendSnake(sn2)
 
     playingField = resizePrepare(field, screen, self_id)
 
@@ -65,7 +65,7 @@ def main():
                 field.change_dir(self_id, i)
                 break
             field.update()
-            if field.snakes[self_id][0].find_crossover() != -1:
+            if field.snakes[self_id].find_crossover() != -1:
                 running = False
 
             draw_field(field, screen, playingField, self_id)
@@ -90,9 +90,9 @@ def draw_field(field: Field, screen, playingField, self_id):
     fieldW, fieldH = field.size
     playingField.fill((0, 0, 0))
     for snake_id in field.snakes.keys():
-        cords2Draw = field.snakes[snake_id][0].listOfCoords_H2T()
+        cords2Draw = field.snakes[snake_id].listOfCoords_H2T()
         for i in cords2Draw:
-            pygame.draw.rect(playingField, 'green' if snake_id == self_id else 'yellow',
+            pygame.draw.rect(playingField, field.snakes[snake_id].color,
                              (i[0] / fieldW * width, i[1] / fieldH * height, ceil(1 / fieldW * width),
                               ceil(1 / fieldH * height)))
     pygame.draw.rect(playingField, 'red',
