@@ -10,15 +10,16 @@ FPS = 200
 VELOCITY = 1
 WALKEVERY = 10
 FIELD_SIZE = 40
+WINDOW_SIZE = (800, 800)
+
+n = None
 
 
 def main():
-    # n = Network()
-    # self_id = n.id
     self_id = 0
 
     pygame.init()
-    screen = pygame.display.set_mode((800, 800), (pygame.RESIZABLE if config.IS_RESIZABLE else 0))
+    screen = pygame.display.set_mode(WINDOW_SIZE, (pygame.RESIZABLE if config.IS_RESIZABLE else 0))
     pygame.display.set_caption('the Python Game (v1.0.0) (alpha 0004)')
     pygame.display.set_icon(pygame.image.load('Frontend/icon.png'))
 
@@ -68,7 +69,10 @@ def main():
             if field.snakes[self_id].find_crossover() != -1:
                 running = False
 
+            web_clock()
+
             draw_field(field, screen, playingField, self_id)
+
         clock.tick(FPS)
         cnt += 1
         cnt %= WALKEVERY
@@ -89,7 +93,7 @@ def draw_field(field: Field, screen, playingField, self_id):
     width, height = playingField.get_size()
     fieldW, fieldH = field.size
     playingField.fill((0, 0, 0))
-    for snake_id in field.snakes.keys():
+    for snake_id in sorted(field.snakes.keys(), reverse=True, key=lambda x: abs(x - self_id)):
         cords2Draw = field.snakes[snake_id].listOfCoords_H2T()
         for i in cords2Draw:
             pygame.draw.rect(playingField, field.snakes[snake_id].color,
@@ -101,3 +105,13 @@ def draw_field(field: Field, screen, playingField, self_id):
 
     screen.blit(playingField, (5, 5))
     pygame.display.update()
+
+
+def web_init():
+    global n
+    n = Network()
+
+
+def web_clock():
+    # called every time with field.update
+    pass
