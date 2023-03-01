@@ -1,13 +1,13 @@
 class Snake:
-    def __init__(self, coord: list[tuple], dir, velocity, snake_id, color="yellow"):
+    def __init__(self, coord: list[tuple], velocity, dir, snake_id, color=(100, 100, 100)):
         if len(coord) > 0:
             self.coordinates = coord
             self.HPointer = 0
             self.TPointer = len(coord) - 1
             self.velocity = velocity
+            self.dir = dir
             self.id = snake_id
             self.color = color
-            self.dir = dir
         else:
             raise ValueError("coordinates length must be at least 1")
 
@@ -20,7 +20,7 @@ class Snake:
         :type incrLen: bool
         Just moves the snake.
         '''
-
+        self.dir = direction
         dirs = [(self.velocity, 0), (0, self.velocity), (-self.velocity, 0), (0, -self.velocity)]
 
         if incrLen:
@@ -46,10 +46,10 @@ class Snake:
             lst.append(self.coordinates[((self.HPointer + i) % len(self.coordinates))])
         return lst
 
-    def predict(self):
+    def predict(self, direction: int):
         dirs = [(self.velocity, 0), (0, self.velocity), (-self.velocity, 0), (0, -self.velocity)]
-        return (self.coordinates[self.HPointer][0] + dirs[self.dir][0],
-                self.coordinates[self.HPointer][1] + dirs[self.dir][1])
+        return (self.coordinates[self.HPointer][0] + dirs[direction][0],
+                self.coordinates[self.HPointer][1] + dirs[direction][1])
 
     def find_crossover(self):
         coords_srt = self.listOfCoords_H2T()

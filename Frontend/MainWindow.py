@@ -7,7 +7,6 @@ from network import Network
 import config
 
 FPS = 200
-VELOCITY = 1
 WALKEVERY = 10
 FIELD_SIZE = 40
 WINDOW_SIZE = (800, 800)
