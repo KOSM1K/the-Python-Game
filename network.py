@@ -20,7 +20,7 @@ class Network:
         except:
             pass
 
-    def send(self, data):
+    def send_get(self, data):
         try:
             self.client.send(str.encode(json.dumps(data)))
             return json.loads(self.client.recv(config.RECV_BYTES).decode())

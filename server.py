@@ -84,7 +84,7 @@ def read(conn):
 
 
 def send(conn, data):
-	conn.send(str.encode(json.dumps(data)))
+	conn.send_get(str.encode(json.dumps(data)))
 
 
 def threaded_client(conn, addr):

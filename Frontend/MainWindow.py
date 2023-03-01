@@ -27,7 +27,7 @@ def main():
 	field = Field([], [], (FIELD_SIZE, FIELD_SIZE))
 	sn = Snake([(i, 0) for i in range(15, -1, -1)], config.VELOCITY, 0, self_id, "green")
 	field.appendSnake(sn)
-	data = n.send({"cords": field.snakes[self_id].coordinates, "apple": field.apple})
+	data = n.send_get({"cords": field.snakes[self_id].coordinates, "apple": field.apple})
 	print(data)
 	room_id = data["room_id"]
 	print("ROOM ID:", room_id)
@@ -121,8 +121,7 @@ def web_clock(network: Network, field: Field, self_id: int):
 		apple = tuple(field.apple)
 	else:
 		apple = None
-	field.apple = apple
-	response_data = network.send({"cords": self_snake.coordinates, "dir": self_snake.dir, "apple": field.apple})
+	response_data = network.send_get({"cords": self_snake.coordinates, "dir": self_snake.dir, "apple": apple})
 
 	field.apple = tuple(response_data["apple"])
 
