@@ -32,8 +32,7 @@ def main():
 	room_id = data["room_id"]
 	print("ROOM ID:", room_id)
 
-	if data["apple"] is not None:
-		field.apple = tuple(data["apple"])
+	field.apple = tuple(data["apple"])
 
 	playingField = resizePrepare(field, screen, self_id)
 
@@ -71,11 +70,11 @@ def main():
 			for i in controls:
 				field.change_dir(self_id, i)
 				break
-			field.update()
-			if field.snakes[self_id].find_crossover() != -1:
-				running = False
 
-			if web_clock(n, field, self_id):
+			field.update()
+			web_clock(n, field, self_id)
+
+			if field.snakes[self_id].find_crossover() != -1:
 				running = False
 
 			draw_field(field, screen, playingField, self_id)
@@ -138,14 +137,10 @@ def web_clock(network: Network, field: Field, self_id: int):
 			field.snakes[player_id].coordinates = player["cords"]
 			field.snakes[player_id].dir = player["dir"]
 			if field.snakes[player_id].find_crossover() != -1:
-				if player_id == self_id:
-					return True
-				else:
+				if player_id != self_id:
 					del field.snakes[player_id]
 
 	field_snakes = list(field.snakes.keys())
 	for player_id in field_snakes:
 		if player_id not in snakes:
 			del field.snakes[player_id]
-
-	return False

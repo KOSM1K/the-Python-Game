@@ -16,6 +16,7 @@ class Field:
 
 	def move_snake(self, snake_id: int, dir: int):
 		'''
+		:param snake_id:
 		:param index: index of a snake
 		:param dir: direction of moving
 		:return:
