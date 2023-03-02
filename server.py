@@ -1,7 +1,6 @@
 import json
 import socket
 from _thread import *
-import sys
 
 from BackEnd.SnakeClass import Snake
 from BackEnd.FieldClass import Field
