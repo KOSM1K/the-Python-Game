@@ -12,9 +12,6 @@ FIELD_SIZE = 40
 WINDOW_SIZE = (800, 800)
 
 
-n = None
-
-
 def main():
 	n = Network()
 	self_id = n.player_id
@@ -25,10 +22,13 @@ def main():
 	pygame.display.set_icon(pygame.image.load('Frontend/icon.png'))
 
 	field = Field([], [], (FIELD_SIZE, FIELD_SIZE))
+
+	cords = [(i, 0) for i in range(15, -1, -1)]
 	sn = Snake([(i, 0) for i in range(15, -1, -1)], config.VELOCITY, 0, self_id, "green")
 	field.appendSnake(sn)
-	data = n.send_get({"cords": field.snakes[self_id].coordinates, "apple": field.apple})
+	data = n.send_get({"cords": cords})
 	print(data)
+
 	room_id = data["room_id"]
 	print("ROOM ID:", room_id)
 
@@ -58,21 +58,23 @@ def main():
 				if event.key in ck.keys():
 					if ck[event.key] not in controls:
 						controls.append(ck[event.key])
-			elif event.type == pygame.KEYUP:
-				if event.key in ck.keys():
-					controls.remove(ck[event.key])
+			# elif event.type == pygame.KEYUP:
+			# 	if event.key in ck.keys():
+			# 		controls.remove(ck[event.key])
 			elif event.type == pygame.WINDOWRESIZED:
 				playingField = resizePrepare(field, screen, self_id)
 
 		# moving snake if needed
 		if cnt == 0:
-			cur = True
-			for i in controls:
-				field.change_dir(self_id, i)
-				break
+			if len(controls) != 0:
+				field.change_dir(self_id, controls[0])
+				web_clock(n, field, self_id, controls[0])
+				controls.pop(0)
+			else:
+				web_clock(n, field, self_id, None)
 
-			field.update()
-			web_clock(n, field, self_id)
+			print(field.snakes[self_id].coordinates)
+			# field.update(self_id=self_id)
 
 			if field.snakes[self_id].find_crossover() != -1:
 				running = False
@@ -113,16 +115,8 @@ def draw_field(field: Field, screen, playingField, self_id):
 	pygame.display.update()
 
 
-def web_clock(network: Network, field: Field, self_id: int):
-	self_snake = field.snakes[self_id]
-
-	if field.apple_changed_pos:
-		field.apple_changed_pos = False
-		apple = tuple(field.apple)
-	else:
-		apple = None
-	response_data = network.send_get({"cords": self_snake.coordinates, "dir": self_snake.dir, "apple": apple})
-
+def web_clock(network: Network, field: Field, self_id: int, control: int):
+	response_data = network.send_get({"control": control})
 	field.apple = tuple(response_data["apple"])
 
 	players_data = response_data["data"]
@@ -135,6 +129,8 @@ def web_clock(network: Network, field: Field, self_id: int):
 		else:
 			field.snakes[player_id].coordinates = player["cords"]
 			field.snakes[player_id].dir = player["dir"]
+			field.snakes[player_id].HPointer = player["HPointer"]
+			field.snakes[player_id].TPointer = player["TPointer"]
 			if field.snakes[player_id].find_crossover() != -1:
 				if player_id != self_id:
 					del field.snakes[player_id]

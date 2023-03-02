@@ -38,7 +38,7 @@ class Snake:
 
 	def listOfCoords_H2T(self):
 		'''
-		makes a list of coordinates starting from head and ending at tail
+		Makes a list of coordinates starting from head and ending at tail
 		:return:
 		'''
 		lst = []

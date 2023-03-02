@@ -4,6 +4,7 @@ from _thread import *
 import sys
 
 from BackEnd.SnakeClass import Snake
+from BackEnd.FieldClass import Field
 import config
 
 
@@ -17,27 +18,27 @@ except socket.error as e:
 
 class Room:
 	def __init__(self, max_players=5):
-		self.max_players = max_players
-		self.players: list[Snake] = list()
-		self.apple = None
+		self.max_players: int = max_players
+		self.field: Field = Field(list(), list())
 
 	def add_player(self, player: Snake):
-		self.players.append(player)
-
-	def get_player_index(self, player_id):
-		return self.players_id.index(player_id)
+		self.field.appendSnake(player)
 
 	def remove_player(self, player_id):
 		try:
-			self.players.pop(self.get_player_index(player_id))
+			del self.field.snakes[player_id]
 		except IndexError:
 			pass
 
 	def players_data(self):
 		data = list()
 		for snake in self.players:
-			data.append({"player_id": snake.id, "snake_color": snake.color, "cords": snake.coordinates, "dir": snake.dir})
+			data.append({"player_id": snake.id, "snake_color": snake.color, "cords": snake.coordinates, "dir": snake.dir, "HPointer": snake.HPointer, "TPointer": snake.TPointer})
 		return data
+
+	@property
+	def players(self):
+		return list(self.field.snakes.values())
 
 	@property
 	def is_free(self):
@@ -55,14 +56,14 @@ class Rooms:
 	def add_player(self, cords, player_id):
 		for room_id, room in self.rooms.items():
 			if room.is_free:
-				room.add_player(Snake(cords, 0, config.VELOCITY, player_id))
+				room.add_player(Snake(cords, config.VELOCITY, 0, player_id))
 				return room_id
 		if len(self.rooms.keys()) == 0:
 			last_id = 0
 		else:
 			last_id = max(self.rooms.keys()) + 1
 		self.rooms[last_id] = Room()
-		self.rooms[last_id].add_player(Snake(cords, 0, config.VELOCITY, player_id))
+		self.rooms[last_id].add_player(Snake(cords, config.VELOCITY, 0, player_id))
 		return last_id
 
 	def remove_player(self, player_id):
@@ -84,7 +85,7 @@ def read(conn):
 
 
 def send(conn, data):
-	conn.send_get(str.encode(json.dumps(data)))
+	conn.send(str.encode(json.dumps(data)))
 
 
 def threaded_client(conn, addr):
@@ -93,12 +94,11 @@ def threaded_client(conn, addr):
 	send(conn, {"player_id": player_id})
 
 	data = read(conn)
-	room_id = rooms.add_player(data["cords"], player_id)
+	room_id = rooms.add_player(list(map(tuple, data["cords"])), player_id)
 	room = rooms.rooms[room_id]
 	print("ROOM ID:", room_id)
-	if rooms.rooms[room_id].apple is None:
-		rooms.rooms[room_id].apple = data["apple"]
-	send(conn, {"room_id": room_id, "data": rooms.rooms[room_id].players_data(), "apple": rooms.rooms[room_id].apple})
+
+	send(conn, {"room_id": room_id, "data": room.players_data(), "apple": room.field.apple})
 
 	while True:
 		try:
@@ -108,15 +108,15 @@ def threaded_client(conn, addr):
 			else:
 				reply = json.loads(data.decode("utf-8"))
 				print(reply)
-				snake = room.players[room.get_player_index(player_id)]
-				snake.coordinates = reply["cords"]
-				snake.dir = reply["dir"]
-				if reply["apple"] is not None:
-					rooms.rooms[room_id].apple = reply["apple"]
+
+				if reply["control"] is not None:
+					room.field.change_dir(player_id, reply["control"])
+				room.field.move_snake(player_id, room.field.snakes[player_id].dir)
+				room.field.snakes[player_id].listOfCoords_H2T()
 
 				players_data = room.players_data()
-				print({"apple": rooms.rooms[room_id].apple})
-				send(conn, {"data": players_data, "apple": rooms.rooms[room_id].apple})
+				print({"apple": room.field.apple, "data": players_data})
+				send(conn, {"data": players_data, "apple": room.field.apple})
 		except ConnectionResetError:
 			break
 	print("Disconnected")

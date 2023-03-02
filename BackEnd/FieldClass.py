@@ -14,10 +14,13 @@ class Field:
 		else:
 			raise ValueError("len(snakes) must be == len(dirs)")
 
+	def is_collide_with_apple(self, snake_id, dir):
+		return (self.apple is not None) and ((self.snakes[snake_id].predict(dir)[0] % self.size[0],
+		                                      self.snakes[snake_id].predict(dir)[1] % self.size[1]) == tuple(self.apple))
+
 	def move_snake(self, snake_id: int, dir: int):
 		'''
-		:param snake_id:
-		:param index: index of a snake
+		:param snake_id: id of a snake
 		:param dir: direction of moving
 		:return:
 		'''
@@ -26,14 +29,13 @@ class Field:
 		if self.snakes[snake_id].dir != restr[dir]:
 			self.snakes[snake_id].dir = dir
 
-			appl_eat = ((self.snakes[snake_id].predict(dir)[0] % self.size[0],
-						 self.snakes[snake_id].predict(dir)[1] % self.size[1]) == self.apple)
-			self.snakes[snake_id].move(dir, appl_eat)
+			apple_eat = self.is_collide_with_apple(snake_id, dir)
+			self.snakes[snake_id].move(dir, apple_eat)
 			self.snakes[snake_id].coordinates[self.snakes[snake_id].HPointer] = \
 				(self.snakes[snake_id].coordinates[self.snakes[snake_id].HPointer][0] % self.size[0],
 				 self.snakes[snake_id].coordinates[self.snakes[snake_id].HPointer][1] % self.size[1])
 
-			if appl_eat:
+			if apple_eat:
 				self.make_apple()
 
 			return True
