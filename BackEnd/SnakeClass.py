@@ -1,5 +1,5 @@
 class Snake:
-	def __init__(self, coord: list[tuple], velocity, dir, snake_id, color=(100, 100, 100)):
+	def __init__(self, coord: list[tuple], velocity, dir, snake_id, color=(100, 100, 100), name=None):
 		if len(coord) > 0:
 			self.coordinates = coord
 			self.HPointer = 0
@@ -8,6 +8,7 @@ class Snake:
 			self.dir = dir
 			self.id = snake_id
 			self.color = color
+			self.name = "" if (name is None) else name
 		else:
 			raise ValueError("coordinates length must be at least 1")
 

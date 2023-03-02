@@ -98,15 +98,25 @@ def resizePrepare(field: Field, screen, self_id):
 
 
 def draw_field(field: Field, screen, playingField, self_id):
+	font = pygame.font.SysFont('Verdana', 15, bold=True)
 	width, height = playingField.get_size()
 	fieldW, fieldH = field.size
 	playingField.fill((0, 0, 0))
 	for snake_id in sorted(field.snakes.keys(), reverse=True, key=lambda x: abs(x - self_id)):
 		cords2Draw = field.snakes[snake_id].listOfCoords_H2T()
-		for i in cords2Draw:
-			pygame.draw.rect(playingField, field.snakes[snake_id].color,
+		for index, i in enumerate(cords2Draw):
+			color = pygame.Color(field.snakes[snake_id].color)
+			hsla_color = color.hsla
+			color.hsla = (hsla_color[0], hsla_color[1], hsla_color[2] - (0 if index == 0 else 7), hsla_color[3])
+
+			pygame.draw.rect(playingField, color,
 							 (i[0] / fieldW * width, i[1] / fieldH * height, ceil(1 / fieldW * width),
 							  ceil(1 / fieldH * height)))
+		snake_name = font.render(field.snakes[snake_id].name, True, pygame.Color("white"))
+		name_width, name_height = snake_name.get_size()
+		playingField.blit(snake_name, ((cords2Draw[0][0] + 0.5) / fieldW * width - (name_width / 2),
+		                               (cords2Draw[0][1] + 0.5) / fieldH * height - (name_height / 2)))
+
 	pygame.draw.rect(playingField, 'red',
 					 (field.apple[0] / fieldW * width, field.apple[1] / fieldH * height, 1 / fieldW * width,
 					  1 / fieldH * height))
