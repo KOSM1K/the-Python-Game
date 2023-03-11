@@ -74,7 +74,7 @@ class Rooms:
 rooms = Rooms()
 
 
-s.listen(10)
+s.listen(20)
 print("Waiting for a connection, Server started!")
 
 
