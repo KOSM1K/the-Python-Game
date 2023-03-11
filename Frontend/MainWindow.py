@@ -41,14 +41,6 @@ def main():
     running = True
     cnt = 1
     controls = []
-    ck = {pygame.K_RIGHT: 0,
-          pygame.K_d: 0,
-          pygame.K_DOWN: 1,
-          pygame.K_s: 1,
-          pygame.K_LEFT: 2,
-          pygame.K_a: 2,
-          pygame.K_UP: 3,
-          pygame.K_w: 3}
 
     clock = pygame.time.Clock()
 
