@@ -72,7 +72,7 @@ def read(conn):
 
 
 def send(conn, data):
-    conn.send(str.encode(json.dumps(data)))
+    conn.send(str.encode(json.dumps(data) + "[END]"))
 
 
 def threaded_client(conn, addr):
@@ -126,7 +126,7 @@ def server_init():
 
     rooms = Rooms()
 
-    s.listen(2)
+    s.listen(10)
     print("Waiting for a connection, Server started!")
 
     while True:
