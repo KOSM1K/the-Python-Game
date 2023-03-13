@@ -22,8 +22,8 @@ def main():
 	pygame.display.set_caption('the Python Game (v1.0.0) (alpha 0005)')
 	pygame.display.set_icon(pygame.image.load('Frontend/icon.png'))
 
-	font = pygame.font.SysFont('Verdana', 30, bold=True)
-	font2 = pygame.font.SysFont('Verdana', 20, bold=True)
+	font = pygame.font.SysFont('Verdana', 60, bold=True)
+	font2 = pygame.font.SysFont('Verdana', 30, bold=True)
 
 	clock = pygame.time.Clock()
 	running = True
@@ -41,10 +41,10 @@ def main():
 			if event.type == pygame.QUIT:
 				running = False
 		screen.fill((0, 0, 0))
-		screen.blit(font.render("Snake game", True, pygame.Color("white")), (50, 50))
-		screen.blit(font2.render("    1 - Single", True, pygame.Color("white")), (50, 90))
-		screen.blit(font2.render("    2 - Multiplayer", True, pygame.Color("white")), (50, 110))
-		screen.blit(font2.render("ESC - Exit", True, pygame.Color("white")), (50, 130))
+		screen.blit(font.render("Snake game", True, pygame.Color("green")), (50, 30))
+		screen.blit(font2.render("    1 - Single", True, pygame.Color("white")), (50, 140))
+		screen.blit(font2.render("    2 - Multiplayer", True, pygame.Color("white")), (50, 180))
+		screen.blit(font2.render("ESC - Exit", True, pygame.Color("white")), (50, 220))
 		pygame.display.update()
 
 		clock.tick(FPS)
