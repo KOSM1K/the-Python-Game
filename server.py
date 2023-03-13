@@ -126,7 +126,7 @@ def server_init():
 
     rooms = Rooms()
 
-    s.listen(10)
+    s.listen(2)
     print("Waiting for a connection, Server started!")
 
     while True:
@@ -134,3 +134,7 @@ def server_init():
         print("Connected to:", addr)
 
         start_new_thread(threaded_client, (conn, addr,))
+
+
+if __name__ == "__main__":
+    server_init()
