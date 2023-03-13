@@ -17,7 +17,8 @@ class EventHandler:
                             pygame.K_w: 3}
 
     def analyseEvent(self, event: pygame.event.Event):
-        if event.type == pygame.QUIT:
+        print(event.type == pygame.K_ESCAPE)
+        if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             self.events['quit'] = True
         elif event.type == pygame.KEYDOWN:
             if event.key in self.controlKeys.keys():
