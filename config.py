@@ -1,4 +1,4 @@
-IS_RESIZABLE = True
+IS_RESIZABLE = False
 
 HOST = "5.39.216.94"
 PORT = 5555

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import sys
+
 import pygame
 from math import ceil
 
@@ -10,10 +12,73 @@ from BackEnd.EventHandlerClass import EventHandler
 from network import Network
 import config
 
-FPS = 125
+FPS = 140
 WALKEVERY = 10
 FIELD_SIZE = 40
 WINDOW_SIZE = (800, 800)
+
+
+class Button:
+	def __init__(self, text, pos, font, font_color="white", bg="black", pudding=5, pudding_left_right=None, action=None):
+		self.x, self.y = pos
+		self.action = action
+		self.font_color = font_color
+		self.bg = bg
+		self.text = text
+
+		self.x_pudding = pudding
+		if pudding_left_right:
+			self.x_pudding = pudding_left_right
+		self.y_pudding = pudding
+
+		self.font = pygame.font.SysFont("Verdana", font)
+		self.size = None
+		self.surface = None
+		self.rect = None
+		self.set_btn()
+
+	def set_btn(self):
+		self.text = self.font.render(self.text, True, pygame.Color(self.font_color))
+		self.size = self.text.get_size()
+		self.surface = pygame.Surface((self.size[0] + self.x_pudding * 2, self.size[1] + self.y_pudding * 2))
+		self.surface.fill(self.bg)
+		self.surface.blit(self.text, (self.x_pudding, self.y_pudding))
+		self.rect = pygame.Rect(self.x - (self.size[0] // 2) - self.x_pudding, self.y - (self.size[1] // 2) - self.y_pudding,
+		                        self.size[0] + self.x_pudding, self.size[1] + self.y_pudding)
+
+	def show(self, screen):
+		screen.blit(self.surface, (self.x - (self.size[0] // 2) - self.x_pudding, self.y - (self.size[1] // 2) - self.y_pudding))
+
+	def is_clicked(self, event):
+		x, y = pygame.mouse.get_pos()
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			if pygame.mouse.get_pressed()[0]:
+				if self.rect.collidepoint(x, y):
+					if callable(self.action):
+						self.action()
+					return True
+		return False
+
+
+class ButtonsGroup:
+	def __init__(self, buttons: list[Button] = None):
+		if buttons is None:
+			buttons = list()
+		self.buttons = buttons
+
+	def show(self, screen):
+		for button in self.buttons:
+			button.show(screen)
+
+	def check_buttons(self, event):
+		is_clicked = False
+		for button in self.buttons:
+			if button.is_clicked(event):
+				is_clicked = True
+		return is_clicked
+
+	def add(self, button: Button):
+		self.buttons.append(button)
 
 
 def main():
@@ -22,31 +87,29 @@ def main():
 	pygame.display.set_caption('the Python Game (v1.0.0) (alpha 0005)')
 	pygame.display.set_icon(pygame.image.load('Frontend/icon.png'))
 
-	font = pygame.font.SysFont('Verdana', 60, bold=True)
-	font2 = pygame.font.SysFont('Verdana', 30, bold=True)
+	title_font = pygame.font.SysFont('Verdana', 80, bold=True)
+
+	buttons = ButtonsGroup()
+	buttons.add(Button("Single", (130, 450), 40, bg="#4aba2b", pudding=10, action=lambda: single_game_mode(screen)))
+	buttons.add(Button("Multiplayer", (400, 450), 40, bg="#d1b22a", pudding=10, action=lambda: server_game_mode(screen)))
+	buttons.add(Button("Exit", (670, 450), 40, bg="#c42f2f", pudding=10, action=lambda: sys.exit()))
 
 	clock = pygame.time.Clock()
 	running = True
 	while running:
 		for event in pygame.event.get():
-			if event.type == pygame.KEYUP:
-				if event.key == ord("1"):
-					single_game_mode(screen)
-					break
-				if event.key == ord("2"):
-					server_game_mode(screen)
-					break
-				if event.key == pygame.K_ESCAPE:
-					running = False
+			if buttons.check_buttons(event):
+				break
 			if event.type == pygame.QUIT:
 				running = False
-		screen.fill((0, 0, 0))
-		screen.blit(font.render("Snake game", True, pygame.Color("green")), (50, 30))
-		screen.blit(font2.render("    1 - Single", True, pygame.Color("white")), (50, 140))
-		screen.blit(font2.render("    2 - Multiplayer", True, pygame.Color("white")), (50, 180))
-		screen.blit(font2.render("ESC - Exit", True, pygame.Color("white")), (50, 220))
-		pygame.display.update()
 
+		screen.fill((0, 0, 0))
+
+		title = title_font.render("Snake game", True, pygame.Color("green"))
+		screen.blit(title, (400 - (title.get_width() // 2), 50))
+
+		buttons.show(screen)
+		pygame.display.update()
 		clock.tick(FPS)
 	pygame.quit()
 
@@ -69,6 +132,7 @@ def single_game_mode(screen: pygame.Surface | pygame.SurfaceType):
 
 	ev = EventHandler()
 
+	exit_btn = Button("x", (785, 15), 40, bg="#d12424", pudding=5)
 	while running:
 		# event capture
 		for event in pygame.event.get():
@@ -78,6 +142,8 @@ def single_game_mode(screen: pygame.Surface | pygame.SurfaceType):
 			if ev.events['resize']:
 				playingField = resizePrepare(field, screen, self_id)
 				ev.events['resize'] = False
+			if exit_btn.is_clicked(event):
+				running = False
 
 		# moving snake if needed
 		if cnt == 0:
@@ -94,6 +160,9 @@ def single_game_mode(screen: pygame.Surface | pygame.SurfaceType):
 		clock.tick(FPS)
 		cnt += 1
 		cnt %= WALKEVERY
+
+		exit_btn.show(screen)
+		pygame.display.update()
 
 
 def server_game_mode(screen: pygame.Surface | pygame.SurfaceType):
@@ -123,6 +192,7 @@ def server_game_mode(screen: pygame.Surface | pygame.SurfaceType):
 
 	ev = EventHandler()
 
+	exit_btn = Button("x", (785, 15), 40, bg="#d12424", pudding=5)
 	while running:
 		# event capture
 		for event in pygame.event.get():
@@ -132,6 +202,8 @@ def server_game_mode(screen: pygame.Surface | pygame.SurfaceType):
 			if ev.events['resize']:
 				playingField = resizePrepare(field, screen, self_id)
 				ev.events['resize'] = False
+			if exit_btn.is_clicked(event):
+				running = False
 
 		# moving snake if needed
 		if cnt == 0:
@@ -153,6 +225,9 @@ def server_game_mode(screen: pygame.Surface | pygame.SurfaceType):
 		clock.tick(FPS)
 		cnt += 1
 		cnt %= WALKEVERY
+
+		exit_btn.show(screen)
+		pygame.display.update()
 
 
 def resizePrepare(field: Field, screen, self_id):
@@ -190,7 +265,6 @@ def draw_field(field: Field, screen, playingField, self_id):
 	                  1 / fieldH * height))
 
 	screen.blit(playingField, (5, 5))
-	pygame.display.update()
 
 
 def web_clock(network: Network, field: Field, self_id: int, control: int = None):
