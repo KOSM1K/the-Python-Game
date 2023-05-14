@@ -1,4 +1,5 @@
-from Frontend import MainWindow
+from Frontend.MainWindow import MainWindow
 
 if __name__ == '__main__':
-    MainWindow.main()
+    win = MainWindow()
+    win.run()
