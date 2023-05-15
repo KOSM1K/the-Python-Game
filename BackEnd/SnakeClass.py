@@ -1,11 +1,10 @@
 class Snake:
-    def __init__(self, coord: list[tuple], velocity):
-        if len(coord) > 0:
-            self.coordinates = coord
-            self.HPointer = 0
-            self.TPointer = len(coord) - 1
-        else:
+    def __init__(self, coord: list[tuple], velocity, color=(0, 255, 0)):
+        if len(coord) <= 0:
             raise ValueError("coordinates length must be at least 1")
+        self.coordinates = coord
+        self.HPointer = 0
+        self.TPointer = len(coord) - 1
         self.velocity = velocity
 
     def move(self, direction: int, incrLen: bool = False):
