@@ -16,7 +16,7 @@ class LocalGame():
         self.screen = screen
 
     def prepareField(self):
-        field = Field([], [], (FieldSize, FieldSize))
+        field = Field([], [], (FieldSizeX, FieldSizeY))
         sn = Snake([(i, 0) for i in range(15, -1, -1)], LenOfStep)
         field.appendSnake(sn, 0)
         return field
