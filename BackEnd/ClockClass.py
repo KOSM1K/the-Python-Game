@@ -9,7 +9,7 @@ class Clock:
     def changeFrequency(self, Herz: float = 1):
         self.delay = 1 / Herz
 
-    def waitNewTick(self, highPrecision: bool = True, forcedTick: bool = True):
+    def waitNewTick(self, highPrecision: bool = True, forcedTick: bool = False):
         overlay = (time.time() - self.lastTick) / self.delay
         if highPrecision:
             while time.time() - self.lastTick < self.delay:
